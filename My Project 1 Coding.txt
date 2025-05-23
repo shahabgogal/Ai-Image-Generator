@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Image Generator</title>
+  <style>
+    body {
+      background: #111;
+      color: #fff;
+      text-align: center;
+      padding: 30px;
+      font-family: Arial;
+    }
+    input, button {
+      padding: 10px;
+      margin: 10px;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    img {
+      margin-top: 20px;
+      width: 300px;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1>AI Image Generator 🎨</h1>
+  <input id="prompt" type="text" placeholder="Type something...">
+  <button onclick="generate()">Generate</button>
+  <div id="output"></div>
+
+  <script>
+    async function generate() {
+      const prompt = document.getElementById('prompt').value;
+      const output = document.getElementById('output');
+      output.innerHTML = "⏳ Loading...";
+      
+      const res = await fetch("https://api-inference.huggingface.co/models/CompVis/stable-diffusion-v1-4", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer YOUR_TOKEN_HERE",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ inputs: prompt })
+      });
+
+      const blob = await res.blob();
+      const imageUrl = URL.createObjectURL(blob);
+      output.innerHTML = `<img src="${imageUrl}" alt="AI Image">`;
+    }
+  </script>
+</body>
+</html>
+<body>
+  <h1>AI Image Generator 🎨</h1>
+  <input id="prompt" type="text" placeholder="Type something...">
+  <button onclick="generate()">Generate</button>
+  <div id="output"></div>
+
+  <!-- Payment button -->
+  <button id="buy-pro">Buy Pro - $4</button>
+
+  <!-- Stripe.js -->
+  <script src="https://js.stripe.com/v3/"></script>
+
+  <script>
+    // Your generate() function here
+
+    // Stripe payment button code here
+    const stripe = Stripe('pk_test_51RRy1KI8QMgrKwY4pEckf0B0fMO8PDcCy4x3IEM6ueyQrLpVaA6Oo9r7aUjmWAT8VfCmphqLxICtihICKFd5JjrN00uptPTPfy');  // Replace with your key
+
+    document.getElementById('buy-pro').addEventListener('click', () => {
+      fetch('/create-checkout-session', { method: 'POST' })
+        .then(res => res.json())
+        .then(data => {
+          stripe.redirectToCheckout({ sessionId: data.id });
+        })
+        .catch(console.error);
+    });
+  </script>
+</body>
